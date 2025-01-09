@@ -8,7 +8,7 @@ import { campusBuildings } from '@/utiles/campusData'
 
 const mapContainerStyle = {
   width: '100%',
-  height: '400px'
+  height: '500px'
 }
 
 const center = {
@@ -27,7 +27,13 @@ const CampusNavigation = () => {
   const mapRef = useRef(null)
   const directionsService = useRef(null)
   const directionsRenderer = useRef(null)
-
+  const bounds = {
+    north: 9.035,
+    south: 9.032,
+    east: 38.766,
+    west: 38.763,
+  }
+  
   useEffect(() => {
     const initMap = async () => {
       try {
@@ -36,19 +42,23 @@ const CampusNavigation = () => {
           version: "weekly",
           libraries: ["places"]
         })
-
+  
         await loader.load()
-
+  
         if (mapRef.current) {
           const newMap = new google.maps.Map(mapRef.current, {
             center,
             zoom: 19,
+            restriction: {
+              latLngBounds: bounds,
+              strictBounds: false, // Set to true to prevent the user from even slightly panning outside the bounds
+            },
           })
           setMap(newMap)
           setIsLoaded(true)
           directionsService.current = new google.maps.DirectionsService()
           directionsRenderer.current = new google.maps.DirectionsRenderer({ map: newMap })
-
+  
           // Add markers for campus buildings
           campusBuildings.forEach((building) => {
             new google.maps.Marker({
@@ -63,9 +73,12 @@ const CampusNavigation = () => {
         setError('Failed to load Google Maps. Please check your internet connection and try again.')
       }
     }
-
+  
     initMap()
   }, [])
+  
+
+  
 
   const calculateRoute = useCallback(() => {
     if (!directionsService.current || !directionsRenderer.current || !map || !start || !end) {
