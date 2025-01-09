@@ -1,23 +1,21 @@
-import type { Metadata } from "next";
 import "./globals.css";
 import {DataProvider}  from '../utiles/mapDataContext'
+import Header from '../components/Header'
 
-
-export const metadata: Metadata = {
+export const metadata = {
   title: "AAU Campus Navigator",
   description: "Computer Science Student Project",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <body 
+      <body  className="bg-white"
       >
         <DataProvider>
+          <Header/>
         {children}
         </DataProvider>
       </body>
