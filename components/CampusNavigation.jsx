@@ -15,6 +15,7 @@ import { useData } from '../utiles/mapDataContext';
 const mapContainerStyle = {
   width: '100%',
   height: '400px',
+
 };
 
 const center = {
@@ -125,8 +126,8 @@ const CampusNavigation = () => {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex space-x-4">
+    <div className="space-y-2 bg-white">
+      {/* <div className="flex space-x-4">
         <Select value={start} onValueChange={setStart}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Select start point" />
@@ -154,11 +155,11 @@ const CampusNavigation = () => {
         <Button onClick={calculateRoute} disabled={!start || !end || !isLoaded}>
           {isLoaded ? 'Navigate' : 'Loading...'}
         </Button>
-      </div>
+      </div> */}
       <div
         ref={mapRef}
         style={mapContainerStyle}
-        className="border rounded-lg shadow-md"
+        className="border rounded-lg shadow-md w-full  min-h-[85vh] "
       ></div>
     </div>
   );

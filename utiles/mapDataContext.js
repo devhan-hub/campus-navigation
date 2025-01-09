@@ -14,6 +14,7 @@ export const DataProvider= ({children})=> {
   const [Dorm, setDorm] = useState([]);
   const [Cafeteria, setCafeteria] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
+  const [targetItem , setTargetItem] = useState({})
   const [fuse, setFuse] = useState(null);
    
 useEffect(() => {
@@ -54,7 +55,7 @@ useEffect(() => {
 
 
 
-    const makeSelected = ( query ) => {
+    const searchItemHandeler = ( query ) => {
         if (query.trim()) {
             const results = fuse.search(query);
             const filteredResults = results.map((result) => result.item);
@@ -62,6 +63,14 @@ useEffect(() => {
         } else {
             setSelectedItems([]);
         }
+    }
+
+    const handelTargetItem =(id)=>{
+       const target = AllData.find((item)=> item.id === id)
+       target? setTargetItem(target):setTargetItem('');
+    }
+    const resetList =()=>{
+      setSelectedItems([])
     }
 
 
@@ -74,8 +83,11 @@ useEffect(() => {
             EmergencyContact,
             Dorm,
             Building ,
-            makeSelected,
-            selectedItems
+            searchItemHandeler,
+            handelTargetItem,
+            targetItem,
+            selectedItems ,
+             resetList
           }}
         >
           {children}
