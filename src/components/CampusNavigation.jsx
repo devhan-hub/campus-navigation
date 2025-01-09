@@ -2,9 +2,9 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { Loader } from '@googlemaps/js-api-loader'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Button } from "@/components/ui/button"
-import { Building, campusBuildings } from '../utiles/campusData'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select"
+import { Button } from "./ui/button"
+import { campusBuildings } from '@/utiles/campusData'
 
 const mapContainerStyle = {
   width: '100%',
@@ -12,27 +12,27 @@ const mapContainerStyle = {
 }
 
 const center = {
-  lat: 40.7128,
-  lng: -74.0060
+  lat: 9.033774850369534,
+  lng: 38.76462349151217,
 }
 
 const CampusNavigation = () => {
-  const [map, setMap] = useState<google.maps.Map | null>(null)
-  const [directions, setDirections] = useState<google.maps.DirectionsResult | null>(null)
-  const [start, setStart] = useState<string>('')
-  const [end, setEnd] = useState<string>('')
-  const [error, setError] = useState<string | null>(null)
+  const [map, setMap] = useState(null)
+  const [directions, setDirections] = useState(null)
+  const [start, setStart] = useState('')
+  const [end, setEnd] = useState('')
+  const [error, setError] = useState(null)
   const [isLoaded, setIsLoaded] = useState(false)
 
-  const mapRef = useRef<HTMLDivElement>(null)
-  const directionsService = useRef<google.maps.DirectionsService | null>(null)
-  const directionsRenderer = useRef<google.maps.DirectionsRenderer | null>(null)
+  const mapRef = useRef(null)
+  const directionsService = useRef(null)
+  const directionsRenderer = useRef(null)
 
   useEffect(() => {
     const initMap = async () => {
       try {
         const loader = new Loader({
-          apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
+          apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
           version: "weekly",
           libraries: ["places"]
         })
@@ -42,7 +42,7 @@ const CampusNavigation = () => {
         if (mapRef.current) {
           const newMap = new google.maps.Map(mapRef.current, {
             center,
-            zoom: 15,
+            zoom: 19,
           })
           setMap(newMap)
           setIsLoaded(true)
@@ -144,4 +144,7 @@ const CampusNavigation = () => {
 }
 
 export default CampusNavigation
+
+
+//   9.034591477385364, 38.763960995425315   
 
