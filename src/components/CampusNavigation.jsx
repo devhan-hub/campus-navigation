@@ -5,10 +5,11 @@ import { Loader } from '@googlemaps/js-api-loader'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select"
 import { Button } from "./ui/button"
 import { campusBuildings } from '@/utiles/campusData'
+import { Card } from "./ui/card"
 
 const mapContainerStyle = {
   width: '100%',
-  height: '500px'
+  height: 'calc(100vh - 140px)'
 }
 
 const center = {
@@ -49,9 +50,11 @@ const CampusNavigation = () => {
           const newMap = new google.maps.Map(mapRef.current, {
             center,
             zoom: 19,
+            minZoom: 16,
+            maxZoom: 19,
             restriction: {
               latLngBounds: bounds,
-              strictBounds: false, // Set to true to prevent the user from even slightly panning outside the bounds
+              strictBounds: false,
             },
           })
           setMap(newMap)
@@ -121,37 +124,79 @@ const CampusNavigation = () => {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex space-x-4">
-        <Select value={start} onValueChange={setStart}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select start point" />
-          </SelectTrigger>
-          <SelectContent>
-            {campusBuildings.map((building) => (
-              <SelectItem key={building.id} value={building.id}>
-                {building.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select value={end} onValueChange={setEnd}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select end point" />
-          </SelectTrigger>
-          <SelectContent>
-            {campusBuildings.map((building) => (
-              <SelectItem key={building.id} value={building.id}>
-                {building.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Button onClick={calculateRoute} disabled={!start || !end || !isLoaded}>
-          {isLoaded ? 'Navigate' : 'Loading...'}
-        </Button>
-      </div>
-      <div ref={mapRef} style={mapContainerStyle} className="border rounded-lg shadow-md"></div>
+    <div className="p-4 bg-gray-50 min-h-screen">
+      <Card className="mb-4 p-6 bg-white shadow-sm">
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+          <div className="flex-1 space-y-2">
+            <label className="text-sm font-medium text-gray-700">Starting Point</label>
+            <Select value={start} onValueChange={setStart}>
+              <SelectTrigger className="w-full sm:w-[200px]">
+                <SelectValue placeholder="Select start point" />
+              </SelectTrigger>
+              <SelectContent>
+                {campusBuildings.map((building) => (
+                  <SelectItem key={building.id} value={building.id}>
+                    {building.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex-1 space-y-2">
+            <label className="text-sm font-medium text-gray-700">Destination</label>
+            <Select value={end} onValueChange={setEnd}>
+              <SelectTrigger className="w-full sm:w-[200px]">
+                <SelectValue placeholder="Select end point" />
+              </SelectTrigger>
+              <SelectContent>
+                {campusBuildings.map((building) => (
+                  <SelectItem key={building.id} value={building.id}>
+                    {building.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex-none pt-6">
+            <Button 
+              onClick={calculateRoute} 
+              disabled={!start || !end || !isLoaded}
+              className="w-full text-black font-bold sm:w-auto border-red-800 bg-white border-2 hover:bg-red-900"
+            >
+              {isLoaded ? (
+                <span className="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                  Navigate
+                </span>
+              ) : (
+                <span className="flex items-center gap-2">
+                  <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Loading...
+                </span>
+              )}
+            </Button>
+          </div>
+        </div>
+      </Card>
+
+      {error && (
+        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+          {error}
+        </div>
+      )}
+
+      <div 
+        ref={mapRef} 
+        style={mapContainerStyle} 
+        className="rounded-lg shadow-md border border-gray-200"
+      />
     </div>
   )
 }
