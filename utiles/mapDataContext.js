@@ -68,6 +68,7 @@ useEffect(() => {
     const handelTargetItem =(id)=>{
        const target = AllData.find((item)=> item.id === id)
        target? setTargetItem(target):setTargetItem('');
+       console.log(targetItem , 'tarfgte')
     }
     const resetList =()=>{
       setSelectedItems([])

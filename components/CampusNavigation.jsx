@@ -35,6 +35,8 @@ const CampusNavigation = () => {
   const mapRef = useRef(null);
   const directionsService = useRef(null);
   const directionsRenderer = useRef(null);
+  const {targetItem} = useData();
+
 
   useEffect(() => {
     const initMap = async () => {
@@ -44,9 +46,9 @@ const CampusNavigation = () => {
           version: 'weekly',
           libraries: ['places'],
         });
-
+  
         await loader.load();
-
+  
         if (mapRef.current) {
           const newMap = new google.maps.Map(mapRef.current, {
             center,
@@ -58,8 +60,7 @@ const CampusNavigation = () => {
           directionsRenderer.current = new google.maps.DirectionsRenderer({
             map: newMap,
           });
-
-          // Add markers for campus buildings
+  
           AllData.forEach((building) => {
             new google.maps.Marker({
               position: { lat: building.lat, lng: building.lng },
@@ -75,9 +76,45 @@ const CampusNavigation = () => {
         );
       }
     };
-
+  
     initMap();
   }, []);
+  
+  //  add marker when user click the place 
+  useEffect(() => {
+    let activeMarker = null;
+    
+    if (map && targetItem) {
+      const { lat, lng, name } = targetItem;
+  
+      if (lat && lng && !isNaN(lat) && !isNaN(lng)) {
+        map.setCenter({ lat, lng });
+  
+        if (activeMarker) {
+          activeMarker.setMap(null);
+        }
+  
+        activeMarker = new google.maps.Marker({
+          position: { lat, lng },
+          map,
+          title: name,
+        });
+      } else {
+        console.error("Invalid targetItem:", targetItem);
+      }
+    }
+  
+    return () => {
+      if (activeMarker) {
+        activeMarker.setMap(null);
+      }
+    };
+  }, [map, targetItem]);
+  
+  
+
+
+
 
   const calculateRoute = useCallback(() => {
     if (
@@ -91,8 +128,8 @@ const CampusNavigation = () => {
       return;
     }
 
-    const startBuilding = AllData.find((b) => b.id === start);
-    const endBuilding = AllData.find((b) => b.id === end);
+    const startBuilding = AllData?.find((b) => b.id === start);
+    const endBuilding = AllData?.find((b) => b.id === end);
 
     if (!startBuilding || !endBuilding) {
       console.error('Invalid start or end building selected');
