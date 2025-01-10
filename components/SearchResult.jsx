@@ -11,7 +11,7 @@ const {selectedItems}   = useData()
 
 
   return (
-    <div className=" absolute top-0 min-w-[400px] px-8 py-12">
+    <div className=" min-w-[400px] px-8 py-12">
       <div className="flex flex-col w-full  gap-1">
         <div className="w-full ">
           <Search/>
