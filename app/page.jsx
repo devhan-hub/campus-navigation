@@ -8,9 +8,7 @@ const CampusNavigation = dynamic(() => import('../components/CampusNavigation'),
 export default function Page() {
   return (
     <main className=" mx-auto p-4  h-screen relative ">
-      <div className='absolute -top-24 z-50'>
-      <SearchResult/>
-      </div>
+      
     
       <div className='-z-20'>
       <CampusNavigation />
