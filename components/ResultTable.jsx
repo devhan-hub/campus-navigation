@@ -12,7 +12,7 @@ export default function ResultTable() {
   const {selectedItems}   = useData()
   return (
     <>
-        <SidNav open={open} setOpen={setOpen}/>
+        
 
     <List
       sx={{
@@ -30,9 +30,13 @@ export default function ResultTable() {
       
           <ul className='space-y-2 pt-4'>
             
-            {selectedItems.map((item , index) => (
-              <ListItem key={index} className='bg-red-50 duration-300 rounded-lg cursor-pointer hover:bg-red-100' onClick={() => {setOpen(!open);handelTargetItem(item.id)}}>
-                <ListItemText primary={` ${item.name}`} sx={{color:'black'}} />
+            {selectedItems.map((item, index) => (
+              <ListItem 
+                key={index} 
+                className='bg-red-50 duration-300 rounded-lg cursor-pointer hover:bg-red-100' 
+                onClick={() => handelTargetItem(item.id)}
+              >
+                <ListItemText primary={item.name} sx={{color:'black'}} />
               </ListItem>
             ))}
           </ul>

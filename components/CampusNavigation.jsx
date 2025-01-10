@@ -277,27 +277,36 @@ const CampusNavigation = () => {
             zoomControl: true,
             styles: [
               {
-                featureType: "poi",
+                featureType: "poi.business",
                 elementType: "labels",
                 stylers: [{ visibility: "off" }]
+              },
+              {
+                featureType: "poi.school",
+                elementType: "labels",
+                stylers: [{ visibility: "on" }]
+              },
+              {
+                featureType: "poi.park",
+                elementType: "labels",
+                stylers: [{ visibility: "on" }]
+              },
+              {
+                featureType: "poi.medical",
+                elementType: "labels",
+                stylers: [{ visibility: "on" }]
+              },
+              {
+                featureType: "poi.government",
+                elementType: "labels",
+                stylers: [{ visibility: "on" }]
               }
             ],
             disableDefaultUI: false,
           });
 
-
           setMap(newMap);
           createMarkers(newMap);
-
-  
-          AllData.forEach((building) => {
-            new google.maps.Marker({
-              position: { lat: building.lat, lng: building.lng },
-              map: newMap,
-              title: building.name,
-            });
-          });
-
         }
       } catch (e) {
         console.error('Error initializing Google Maps:', e);
@@ -305,11 +314,8 @@ const CampusNavigation = () => {
     };
   
     initMap();
+  }, [createMarkers, AllData]);
 
-  }, [createMarkers]);
-
-  }, []);
-  
   //  add marker when user click the place 
   useEffect(() => {
     let activeMarker = null;
