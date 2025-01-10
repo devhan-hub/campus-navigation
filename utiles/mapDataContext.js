@@ -73,6 +73,17 @@ useEffect(() => {
       setSelectedItems([])
     }
 
+    const getAllMapLocations = () => {
+        return AllData.filter(item => 
+            item.latitude && item.longitude && 
+            !isNaN(item.latitude) && !isNaN(item.longitude)
+        ).map(item => ({
+            id: item.id,
+            name: item.name,
+            category: item.category,
+            position: [parseFloat(item.latitude), parseFloat(item.longitude)],
+        }));
+    };
 
     return (
         <mapDataContext.Provider

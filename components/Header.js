@@ -20,7 +20,8 @@ export default function SearchAppBar() {
                         boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
                     }}
                 >
-                    <div className="container mx-auto flex items-center justify-between relative">
+                    <div className="container mx-auto flex flex-col md:flex-row items-center justify-between relative">
+                      <div>
                         <Typography
                             variant="h5"
                             noWrap
@@ -33,10 +34,10 @@ export default function SearchAppBar() {
                             }}
                         >
                             AAU Campus Navigator
-                        </Typography>
+                        </Typography></div>
 
                         <div className='flex items-center gap-4'>
-                            <div className='w-[300px] relative'>
+                            <div className='w-[300px] '>
                                
                                 <SearchResult />
                             </div>
