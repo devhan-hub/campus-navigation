@@ -30,7 +30,6 @@ const ActionButton = ({ icon: Icon, label }) => (
 
 export default function SideNav({ open, setOpen }) {
   const {targetItem} = useData()
-  console.log(targetItem , 'target')
   if (!targetItem) return null;
 
   const actions = [

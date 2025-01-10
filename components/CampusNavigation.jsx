@@ -23,6 +23,7 @@ const CampusNavigation = () => {
   const { AllData } = useData();
   console.log(AllData)
   const mapRef = useRef(null);
+
   const markersRef = useRef([]);
 
   const getMarkerIcon = (category) => {
@@ -247,6 +248,12 @@ const CampusNavigation = () => {
     }
   }, [map, getCurrentLocation]);
 
+  const directionsService = useRef(null);
+  const directionsRenderer = useRef(null);
+  const {targetItem} = useData();
+
+
+
   useEffect(() => {
     const initMap = async () => {
       try {
@@ -255,9 +262,9 @@ const CampusNavigation = () => {
           version: 'weekly',
           libraries: ['places']
         });
-
+  
         await loader.load();
-
+  
         if (mapRef.current) {
           const newMap = new google.maps.Map(mapRef.current, {
             center,
@@ -278,16 +285,67 @@ const CampusNavigation = () => {
             disableDefaultUI: false,
           });
 
+
           setMap(newMap);
           createMarkers(newMap);
+
+  
+          AllData.forEach((building) => {
+            new google.maps.Marker({
+              position: { lat: building.lat, lng: building.lng },
+              map: newMap,
+              title: building.name,
+            });
+          });
+
         }
       } catch (e) {
         console.error('Error initializing Google Maps:', e);
       }
     };
-
+  
     initMap();
+
   }, [createMarkers]);
+
+  }, []);
+  
+  //  add marker when user click the place 
+  useEffect(() => {
+    let activeMarker = null;
+    
+    if (map && targetItem) {
+      const { lat, lng, name } = targetItem;
+  
+      if (lat && lng && !isNaN(lat) && !isNaN(lng)) {
+        map.setCenter({ lat, lng });
+  
+        if (activeMarker) {
+          activeMarker.setMap(null);
+        }
+  
+        activeMarker = new google.maps.Marker({
+          position: { lat, lng },
+          map,
+          title: name,
+        });
+      } else {
+        console.error("Invalid targetItem:", targetItem);
+      }
+    }
+  
+    return () => {
+      if (activeMarker) {
+        activeMarker.setMap(null);
+      }
+    };
+  }, [map, targetItem]);
+  
+  
+
+
+
+
 
   // Re-create markers when AllData changes
   useEffect(() => {
@@ -296,19 +354,7 @@ const CampusNavigation = () => {
     }
   }, [AllData, map, createMarkers]);
 
-  // Add this logging to help debug which locations are being processed
-  useEffect(() => {
-    if (AllData) {
-      console.log('All locations:', AllData.map(loc => loc.name));
-      const validLocs = normalizeLocations(AllData);
-      console.log('Valid locations:', validLocs.map(loc => loc.name));
-      console.log('Missing locations:', 
-        AllData.filter(loc => 
-          !validLocs.find(valid => valid.name === loc.name)
-        ).map(loc => loc.name)
-      );
-    }
-  }, [AllData, normalizeLocations]);
+
 
   return (
     <div className="space-y-2 bg-white">
