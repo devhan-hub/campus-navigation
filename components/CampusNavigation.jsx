@@ -17,6 +17,9 @@ const center = {
 const CampusNavigation = () => {
   const [map, setMap] = useState(null);
   const [activeInfoWindow, setActiveInfoWindow] = useState(null);
+  const [userLocation, setUserLocation] = useState(null);
+  const [locationMarker, setLocationMarker] = useState(null);
+  const [accuracyCircle, setAccuracyCircle] = useState(null);
   const { AllData } = useData();
   console.log(AllData)
   const mapRef = useRef(null);
@@ -131,6 +134,118 @@ const CampusNavigation = () => {
 
     console.log(`Created ${markersRef.current.length} markers out of ${AllData?.length} locations`);
   }, [AllData, activeInfoWindow, normalizeLocations]);
+
+  // Function to handle getting user's location
+  const getCurrentLocation = useCallback(() => {
+    // Clear existing marker and circle if they exist
+    if (locationMarker) {
+      locationMarker.setMap(null);
+      setLocationMarker(null);
+    }
+    if (accuracyCircle) {
+      accuracyCircle.setMap(null);
+      setAccuracyCircle(null);
+    }
+  
+    // If we were just clearing markers, return early
+    if (userLocation) {
+      setUserLocation(null);
+      return;
+    }
+  
+    // Otherwise, get new location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const pos = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+          setUserLocation(pos);
+  
+          if (map) {
+            map.panTo(pos);
+            map.setZoom(18);
+  
+            const marker = new google.maps.Marker({
+              position: pos,
+              map: map,
+              icon: {
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 10,
+                fillColor: "#4285F4",
+                fillOpacity: 1,
+                strokeColor: "#FFFFFF",
+                strokeWeight: 2,
+              },
+              title: "Your Location"
+            });
+  
+            const circle = new google.maps.Circle({
+              map: map,
+              center: pos,
+              radius: position.coords.accuracy,
+              strokeColor: "#4285F4",
+              strokeOpacity: 0.2,
+              strokeWeight: 1,
+              fillColor: "#4285F4",
+              fillOpacity: 0.1,
+            });
+  
+            setLocationMarker(marker);
+            setAccuracyCircle(circle);
+          }
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+          alert("Error getting your location. Please check your location permissions.");
+        }
+      );
+    } else {
+      alert("Geolocation is not supported by this browser.");
+    }
+  }, [map, locationMarker, accuracyCircle, userLocation]);
+
+  // Add location button to map only once
+  useEffect(() => {
+    if (map) {
+      // Check if button already exists
+      const existingButton = document.querySelector('.custom-map-control-button');
+      if (existingButton) return;
+
+      const locationButton = document.createElement("button");
+      locationButton.classList.add(
+        "custom-map-control-button",
+        "bg-white",
+        "p-2",
+        "rounded-full",
+        "shadow-lg",
+        "hover:bg-gray-100"
+      );
+      locationButton.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      `;
+      
+      const clickHandler = () => getCurrentLocation();
+      locationButton.addEventListener("click", clickHandler);
+      map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(locationButton);
+
+      // Cleanup function to remove the button when component unmounts
+      return () => {
+        locationButton.removeEventListener("click", clickHandler);
+        const index = map.controls[google.maps.ControlPosition.RIGHT_BOTTOM]
+          .getArray()
+          .indexOf(locationButton);
+        if (index > -1) {
+          map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].removeAt(index);
+        }
+        locationButton.remove();
+      };
+    }
+  }, [map, getCurrentLocation]);
 
   useEffect(() => {
     const initMap = async () => {
