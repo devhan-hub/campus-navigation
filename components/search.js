@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useRef } from "react";
 import { Search as SearchIcon, X as XIcon } from "lucide-react";
 import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
@@ -51,6 +51,14 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export default function Search() {
   const { searchItemHandeler, resetList } = useData();
+  const inputRef = useRef(null);
+
+  const handleReset = () => {
+    resetList();
+    if (inputRef.current) {
+      inputRef.current.value = '';
+    }
+  };
 
   return (
     <SearchWrapper>
@@ -58,11 +66,12 @@ export default function Search() {
         <SearchIcon size={20} />
       </SearchIconWrapper>
       <StyledInputBase
+        inputRef={inputRef}
         placeholder="Search campus locations..."
         onChange={(e) => searchItemHandeler(e.target.value)}
       />
       <div 
-        onClick={resetList}
+        onClick={handleReset}
         style={{
           position: 'absolute',
           right: '8px',

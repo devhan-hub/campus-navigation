@@ -86,7 +86,7 @@ export default function CatagorySideBar({open ,setOpen}) {
                 <ChevronLeftIcon sx={{fontSize:'38px'}}/>
               </IconButton>
             }
-        <Typography variant='h5' className='text-center '>{isCatagory?'Catagory':'CatagoryContent'}</Typography>
+        <Typography variant='h5' className='ml-2'>{isCatagory?'Catagory':'Catagory Content'}</Typography>
         </div>
       <List>
         {displayContent.map((text, index) => (
@@ -112,7 +112,7 @@ export default function CatagorySideBar({open ,setOpen}) {
         {isCatagory && DrawerList(catagory)}
         {!isCatagory && DrawerList(selectedCatgory)}
       </Drawer>
-      <SideNav open={infoSideBarOpen} setOpen ={setInfoSideBarOpen}/>
+      
     </div>
   );
 }
