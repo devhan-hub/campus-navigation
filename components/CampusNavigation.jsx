@@ -17,12 +17,18 @@ const center = {
 const CampusNavigation = () => {
   const [map, setMap] = useState(null);
   const [directions, setDirections] = useState(null);
-  const { AllData } = useData();
-  const [error, setError] = useState(null);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const { AllData, loading, error } = useData();
   const mapRef = useRef(null);
   const directionsService = useRef(null);
   const directionsRenderer = useRef(null);
+
+  if (loading) {
+    return <div>Loading map data...</div>;
+  }
+
+  if (error) {
+    return <div className="text-red-500">{error}</div>;
+  }
 
   useEffect(() => {
     const initMap = async () => {
@@ -44,7 +50,6 @@ const CampusNavigation = () => {
             streetViewControl: false,
           });
           setMap(newMap);
-          setIsLoaded(true);
           directionsService.current = new google.maps.DirectionsService();
           directionsRenderer.current = new google.maps.DirectionsRenderer({
             map: newMap,
@@ -68,10 +73,6 @@ const CampusNavigation = () => {
 
     initMap();
   }, []);
-
-  if (error) {
-    return <div className="text-red-500">{error}</div>;
-  }
 
   return (
     <div className="space-y-2 bg-white">
