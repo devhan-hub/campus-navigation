@@ -21,7 +21,7 @@ const CampusNavigation = () => {
   const [locationMarker, setLocationMarker] = useState(null);
   const [accuracyCircle, setAccuracyCircle] = useState(null);
   const { AllData } = useData();
-  console.log(AllData)
+  
   const mapRef = useRef(null);
 
   const markersRef = useRef([]);
@@ -198,7 +198,7 @@ const CampusNavigation = () => {
           }
         },
         (error) => {
-          console.error("Error getting location:", error);
+          
           alert("Error getting your location. Please check your location permissions.");
         }
       );
@@ -309,7 +309,7 @@ const CampusNavigation = () => {
           createMarkers(newMap);
         }
       } catch (e) {
-        console.error('Error initializing Google Maps:', e);
+        alert('Error initializing Google Maps:');
       }
     };
   
