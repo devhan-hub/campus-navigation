@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-import { Menu } from 'lucide-react';
+
 import SearchResult from './SearchResult';
 import Image from 'next/image';
 
