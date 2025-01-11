@@ -1,9 +1,10 @@
 "use client";
-import React, { useRef } from "react";
+import React, { useState, useRef } from "react";
 import { Search as SearchIcon, X as XIcon } from "lucide-react";
 import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import { useData } from "../utiles/mapDataContext";
+import CatagorySideBar from "./CatagorySideBar";
 
 const SearchWrapper = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -50,39 +51,65 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function Search() {
-  const { searchItemHandeler, resetList } = useData();
+  const [open, setOpen] = useState(false);
+  const { searchItemHandeler, resetList, selectedItems } = useData();
+  const [notFound, setNotFound] = useState(false);
   const inputRef = useRef(null);
+
+  const handleSearch = (value) => {
+    searchItemHandeler(value);
+    setNotFound(value && selectedItems.length === 0);
+  };
 
   const handleReset = () => {
     resetList();
+    setNotFound(false);
     if (inputRef.current) {
       inputRef.current.value = '';
     }
   };
 
   return (
-    <SearchWrapper>
-      <SearchIconWrapper>
-        <SearchIcon size={20} />
-      </SearchIconWrapper>
-      <StyledInputBase
-        inputRef={inputRef}
-        placeholder="Search campus locations..."
-        onChange={(e) => searchItemHandeler(e.target.value)}
-      />
-      <div 
-        onClick={handleReset}
-        style={{
-          position: 'absolute',
-          right: '8px',
-          top: '50%',
-          transform: 'translateY(-50%)',
-          cursor: 'pointer',
-          padding: '4px'
-        }}
-      >
-        <XIcon size={20} />
-      </div>
-    </SearchWrapper>
+    <div>
+    <div className="flex flex-row md:-ml-24 ">
+      <SearchWrapper>
+        <SearchIconWrapper>
+          <SearchIcon size={20} />
+        </SearchIconWrapper>
+        <StyledInputBase
+          inputRef={inputRef}
+          placeholder="Search campus locations..."
+          onChange={(e) => handleSearch(e.target.value)}
+        />
+        <div
+          onClick={handleReset}
+          style={{
+            position: 'absolute',
+            right: '8px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            cursor: 'pointer',
+            padding: '4px',
+          }}
+        >
+          <XIcon size={20} />
+        </div>
+      </SearchWrapper>
+      <button 
+                className="pt-1 pb-1 px-4 rounded-md text-white border-2 border-white hover:bg-white/10 transition-colors"
+                onClick={() => setOpen(true)}
+              >
+                Catagory
+              </button>
+      
+    </div>
+    <div className="relative">
+    <CatagorySideBar open={open} setOpen={setOpen}/>
+  </div>
+    {notFound && (
+      <p style={{ color: 'white', marginTop: '10px' }}>
+        Not found. Please search again.
+      </p>
+    )}</div>
   );
 }
